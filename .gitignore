@@ -1,3 +1,4 @@
 
 *.xml
 .idea/workspace.xml
+.ipynb_checkpoints/CropDiseaseTensorflow-checkpoint.ipynb
