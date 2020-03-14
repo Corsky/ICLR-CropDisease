@@ -1,39 +1,68 @@
 import numpy as np
-import pandas as pd
 import cv2
 import os
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
 from sklearn.model_selection import train_test_split
+from tensorflow.python.client import device_lib
 fileRoot = "D:\\ICLR-CropDisease\\dataset\\"
+zipsize =128
 
+path_healthy = "train\\healthy_wheat\\"
+path_leaf = "train\\leaf_rust\\"
+path_stem = "train\\stem_rust\\"
 
-# Load data and preprocess
+def blur(image):
+    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)
+    return cv2.filter2D(image, -1, kernel=kernel)
+def preprocess(res):
+    zipsize = 256
+    res = cv2.resize(res, dsize=(zipsize, zipsize))
+    res = blur(res)
+    res = res [64:192,64:192]
+    return res
 def loadData():
     data_img = []
     data_label = []
-
-    for file in os.listdir(fileRoot + "train\\healthy_wheat\\"):
-        img = cv2.imread(fileRoot + "train\\healthy_wheat\\" + file)
-        res = cv2.resize(img, dsize=(128, 128))
+    for file in os.listdir(fileRoot + path_healthy):
+        img = cv2.imread(fileRoot + path_healthy + file)
+        res = preprocess(img)
         data_img.append(res)
-        data_label.append(0)
+        data_label.append(2)
+        data_img.append(cv2.flip(res, 1))
+        data_label.append(2)
+        data_img.append(cv2.flip(res, 0))
+        data_label.append(2)
+        data_img.append(cv2.flip(res, -1))
+        data_label.append(2)
 
-    for file in os.listdir(fileRoot + "train\\leaf_rust\\"):
-        img = cv2.imread(fileRoot + "train\\leaf_rust\\" + file)
+    for file in os.listdir(fileRoot + path_leaf):
+        img = cv2.imread(fileRoot + path_leaf + file)
         if img is None:
             print(file)
             continue
-        res = cv2.resize(img, dsize=(128, 128))
+        res = preprocess(img)
+        data_label.append(0)
         data_img.append(res)
-        data_label.append(1)
+        data_img.append(cv2.flip(res, 1))
+        data_label.append(0)
+        data_img.append(cv2.flip(res, 0))
+        data_label.append(0)
+        data_img.append(cv2.flip(res, -1))
+        data_label.append(0)
 
     for file in os.listdir(fileRoot + "train\\stem_rust\\"):
         img = cv2.imread(fileRoot + "train\\stem_rust\\" + file)
-        res = cv2.resize(img, dsize=(128, 128))
+        res = preprocess(img)
         data_img.append(res)
-        data_label.append(2)
-
+        data_label.append(1)
+        data_img.append(cv2.flip(res, 1))
+        data_label.append(1)
+        data_img.append(cv2.flip(res, 0))
+        data_label.append(1)
+        data_img.append(cv2.flip(res, -1))
+        data_label.append(1)
+        
     for i in range(len(data_img)):
         data_img[i] = data_img[i] / 255
     data_img = np.array(data_img)
@@ -43,36 +72,107 @@ def loadData():
 def trainTestSplit(data_img,data_label):
 
     X_train, X_test, y_train, y_test = train_test_split(data_img,data_label,test_size = 0.3)
-    return X_train, X_test, y_train, y_test
-
-#Create CNN model
-# Current : 3 conv layers, 2 pooling, 1 flatten, 2 dense.
-
-def trainModel():
-    data_img,data_lable = loadData()
-    X_train, X_test, y_train, y_test = trainTestSplit(data_img,data_lable)
     y_train =np.array(y_train)
     y_test =np.array(y_test)
-    model = models.Sequential()
-    model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(128, 128, 3)))
-    model.add(layers.MaxPooling2D((2, 2)))
-    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-    model.add(layers.MaxPooling2D((2, 2)))
-    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-    model.add(layers.Flatten())
-    model.add(layers.Dense(64, activation='relu'))
-    model.add(layers.Dense(3))
+    return X_train, X_test, y_train, y_test
 
-    model.compile(optimizer='adam',
-                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                  metrics=['accuracy'])
+def trainModel(X_train, X_test, y_train, y_test):
+   
+    with tf.device('/gpu:0'):
+        model = models.Sequential()
+        model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(zipsize, zipsize, 3)))
+        tf.keras.layers.Dropout(0.2)
+        model.add(layers.MaxPooling2D((2, 2)))
+        model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+        tf.keras.layers.Dropout(0.2)
+        model.add(layers.MaxPooling2D((2, 2)))
+        model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+        tf.keras.layers.Dropout(0.2)
+        model.add(layers.MaxPooling2D((2, 2)))
+        model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+        tf.keras.layers.Dropout(0.2)
+        model.add(layers.MaxPooling2D((2, 2)))
+        model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+        tf.keras.layers.Dropout(0.2)
+        model.add(layers.Flatten())
+        model.add(layers.Dense(128, activation='relu'))
+        model.add(layers.Dense(3,activation='softmax'))
 
-    # Train
-    history = model.fit(X_train, y_train, epochs=10)
+        model.compile(optimizer='Adamax',
+                      loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                      metrics=['accuracy'])
 
-    # test
-    test_loss, test_acc = model.evaluate(X_test,y_test, verbose=2)
-    print(test_acc)
+        # Train
+        history = model.fit(X_train, y_train,batch_size = 16, epochs=100,use_multiprocessing = True)
 
-trainModel()
-    #output result
+        # test
+        #test_loss, test_acc = model.evaluate(X_test,y_test, batch_size = 16, verbose=2)
+        #print(test_acc)
+        return model
+    
+    
+data_img,data_lable = loadData()
+print("DATA READY")
+
+
+#X_train, X_test, y_train, y_test = trainTestSplit(data_img,data_lable)
+
+#model = trainModel(X_train, X_test, y_train, y_test)
+data_label = np.array(data_lable)
+model = trainModel(data_img,[],data_label,[])
+    
+
+
+
+
+def loadTest():
+    test = []
+    name = []
+    for file in os.listdir(fileRoot + "test\\"):
+        img = cv2.imread(fileRoot + "test\\" + file)
+        res = preprocess(img)
+        test.append(res)
+        name.append(file)
+    for i in range(len(test)):
+        test[i] = test[i] / 255
+    test = np.array(test)
+    result = model.predict_proba(test)
+    return name, result
+name,result = loadTest()
+
+
+
+
+
+
+
+import pandas as pd
+
+
+output = []
+for i in range(len(result)):
+    output.append(np.append(result[i],name[i][0:6]).tolist())
+my_df = pd.DataFrame(output)
+# change order of columns of csv file so the name is in the first column
+#print (my_df)
+my_df = my_df[[3, 0, 1, 2]]
+my_df.columns = ['ID', 'leaf_rust', 'stem_rust', 'healthy_wheat']
+my_df.to_csv('submission.csv', index=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
