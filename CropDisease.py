@@ -5,19 +5,24 @@ import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
 from sklearn.model_selection import train_test_split
 from tensorflow.python.client import device_lib
+import time
+
 fileRoot = "/home/zg2358/"
 zipsize =128
 
 print("Tensorflow version: ", tf.__version__, "\n")
 print("cv2 version: ", cv2.__version__, "\n")
+time.sleep(1)
 
 print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')), "\n")
+time.sleep(1)
 
 print ("path setting")
 path_healthy = "train/healthy_wheat/"
 path_leaf = "train/leaf_rust/"
 path_stem = "train/stem_rust/"
 print ("path set\n")
+time.sleep(1)
 
 print ("data loading block declaring")
 def blur(image):
@@ -76,6 +81,7 @@ def loadData():
     data_img = np.array(data_img)
     return data_img, data_label
 print ("data loading block declared\n")
+time.sleep(1)
 
 print("model block declaring")
 def trainTestSplit(data_img,data_label):
@@ -115,17 +121,19 @@ def trainModel(X_train, X_test, y_train, y_test):
                       metrics=['accuracy'])
 
         # Train
-        history = model.fit(X_train, y_train,batch_size = 16, epochs=100,use_multiprocessing = True)
+        history = model.fit(X_train, y_train,batch_size = 16, epochs=20, use_multiprocessing = True)
 
         # test
         #test_loss, test_acc = model.evaluate(X_test,y_test, batch_size = 16, verbose=2)
         #print(test_acc)
         return model
 print("model block declared\n")
+time.sleep(1)
 
 print("Data loading")
 data_img,data_lable = loadData()
 print("Data Loaded\n")
+time.sleep(1)
 
 
 #X_train, X_test, y_train, y_test = trainTestSplit(data_img,data_lable)
@@ -135,6 +143,7 @@ print("model training")
 data_label = np.array(data_lable)
 model = trainModel(data_img,[],data_label,[])
 print("model trained\n")
+time.sleep(1)
 
 print("testing data loading\n")
 def loadTest():
@@ -152,6 +161,7 @@ def loadTest():
     return name, result
 name,result = loadTest()
 print("testing data loaded\n")
+time.sleep(1)
 
 import pandas as pd
 
@@ -167,6 +177,7 @@ my_df.columns = ['ID', 'leaf_rust', 'stem_rust', 'healthy_wheat']
 my_df.to_csv('submission.csv', index=False)
 
 print("submission.csv modified\n")
+time.sleep(10)
 
 
 
