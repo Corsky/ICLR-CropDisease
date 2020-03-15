@@ -9,6 +9,7 @@ fileRoot = "/home/zg2358/"
 zipsize =128
 
 print("Tensorflow version: ", tf.__version__, "\n")
+print(tf.config.experimental.list_physical_devices('GPU'))
 
 print ("path setting")
 path_healthy = "train/healthy_wheat/"
