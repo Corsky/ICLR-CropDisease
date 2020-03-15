@@ -9,7 +9,9 @@ import time
 
 start_time = time.time()
 
-fileRoot = "/home/zg2358/"
+
+
+
 zipsize =128
 
 print("Tensorflow version: ", tf.__version__, "\n")
@@ -20,9 +22,12 @@ print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('
 time.sleep(1)
 
 print ("path setting")
+fileRoot = "/home/zg2358/"
+path_rust = "train/stem_rust/"
 path_healthy = "train/healthy_wheat/"
 path_leaf = "train/leaf_rust/"
 path_stem = "train/stem_rust/"
+path_test = "test/"
 print ("path set\n")
 time.sleep(1)
 
@@ -66,8 +71,8 @@ def loadData():
         data_img.append(cv2.flip(res, -1))
         data_label.append(0)
 
-    for file in os.listdir(fileRoot + "train/stem_rust/"):
-        img = cv2.imread(fileRoot + "train/stem_rust/" + file)
+    for file in os.listdir(fileRoot + path_rust):
+        img = cv2.imread(fileRoot + path_rust + file)
         res = preprocess(img)
         data_img.append(res)
         data_label.append(1)
@@ -151,8 +156,8 @@ print("testing data loading\n")
 def loadTest():
     test = []
     name = []
-    for file in os.listdir(fileRoot + "test/"):
-        img = cv2.imread(fileRoot + "test/" + file)
+    for file in os.listdir(fileRoot + path_test):
+        img = cv2.imread(fileRoot + path_test + file)
         res = preprocess(img)
         test.append(res)
         name.append(file)
