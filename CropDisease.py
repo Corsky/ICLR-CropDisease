@@ -14,6 +14,8 @@ path_healthy = "train/healthy_wheat/"
 path_leaf = "train/leaf_rust/"
 path_stem = "train/stem_rust/"
 
+print ("path set\n")
+
 def blur(image):
     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)
     return cv2.filter2D(image, -1, kernel=kernel)
@@ -69,7 +71,7 @@ def loadData():
         data_img[i] = data_img[i] / 255
     data_img = np.array(data_img)
     return data_img, data_label
-
+print ("data loading block declared\n")
 
 def trainTestSplit(data_img,data_label):
 
@@ -111,10 +113,11 @@ def trainModel(X_train, X_test, y_train, y_test):
         #test_loss, test_acc = model.evaluate(X_test,y_test, batch_size = 16, verbose=2)
         #print(test_acc)
         return model
-    
+
+print("model block declared\n")
     
 data_img,data_lable = loadData()
-print("DATA READY")
+print("DATA READY!\n")
 
 
 #X_train, X_test, y_train, y_test = trainTestSplit(data_img,data_lable)
@@ -123,9 +126,7 @@ print("DATA READY")
 data_label = np.array(data_lable)
 model = trainModel(data_img,[],data_label,[])
     
-
-
-
+print("model trained\n")
 
 def loadTest():
     test = []
@@ -144,10 +145,6 @@ name,result = loadTest()
 
 
 
-
-
-
-
 import pandas as pd
 
 
@@ -161,7 +158,7 @@ my_df = my_df[[3, 0, 1, 2]]
 my_df.columns = ['ID', 'leaf_rust', 'stem_rust', 'healthy_wheat']
 my_df.to_csv('submission.csv', index=False)
 
-
+print("submission.csv modified\n")
 
 
 
