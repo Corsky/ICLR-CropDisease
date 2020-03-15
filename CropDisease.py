@@ -17,7 +17,7 @@ path_leaf = "train/leaf_rust/"
 path_stem = "train/stem_rust/"
 print ("path set\n")
 
-print ("data loading block declaring\n")
+print ("data loading block declaring")
 def blur(image):
     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)
     return cv2.filter2D(image, -1, kernel=kernel)
