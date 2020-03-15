@@ -8,14 +8,15 @@ from tensorflow.python.client import device_lib
 fileRoot = "/home/zg2358/"
 zipsize =128
 
-print("Tensorflow version: ", tf.__version__)
+print("Tensorflow version: ", tf.__version__, "\n")
 
+print ("path setting")
 path_healthy = "train/healthy_wheat/"
 path_leaf = "train/leaf_rust/"
 path_stem = "train/stem_rust/"
-
 print ("path set\n")
 
+print ("data loading block declaring\n")
 def blur(image):
     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)
     return cv2.filter2D(image, -1, kernel=kernel)
@@ -73,6 +74,7 @@ def loadData():
     return data_img, data_label
 print ("data loading block declared\n")
 
+print("model block declaring")
 def trainTestSplit(data_img,data_label):
 
     X_train, X_test, y_train, y_test = train_test_split(data_img,data_label,test_size = 0.3)
@@ -113,21 +115,22 @@ def trainModel(X_train, X_test, y_train, y_test):
         #test_loss, test_acc = model.evaluate(X_test,y_test, batch_size = 16, verbose=2)
         #print(test_acc)
         return model
-
 print("model block declared\n")
-    
+
+print ("Data loading")
 data_img,data_lable = loadData()
-print("DATA READY!\n")
+print("Data Loaded\n")
 
 
 #X_train, X_test, y_train, y_test = trainTestSplit(data_img,data_lable)
 
+print("model training")
 #model = trainModel(X_train, X_test, y_train, y_test)
 data_label = np.array(data_lable)
 model = trainModel(data_img,[],data_label,[])
-    
 print("model trained\n")
 
+print("testing data loading\n")
 def loadTest():
     test = []
     name = []
@@ -142,12 +145,11 @@ def loadTest():
     result = model.predict_proba(test)
     return name, result
 name,result = loadTest()
-
-
+print("testing data loaded\n")
 
 import pandas as pd
 
-
+print("submission.csv modifing")
 output = []
 for i in range(len(result)):
     output.append(np.append(result[i],name[i][0:6]).tolist())
