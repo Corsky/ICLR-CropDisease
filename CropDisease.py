@@ -55,8 +55,8 @@ def loadData():
         data_img.append(cv2.flip(res, -1))
         data_label.append(0)
 
-    for file in os.listdir(fileRoot + "train\\stem_rust\\"):
-        img = cv2.imread(fileRoot + "train\\stem_rust\\" + file)
+    for file in os.listdir(fileRoot + "train/stem_rust/"):
+        img = cv2.imread(fileRoot + "train/stem_rust/" + file)
         res = preprocess(img)
         data_img.append(res)
         data_label.append(1)
@@ -131,8 +131,8 @@ print("model trained\n")
 def loadTest():
     test = []
     name = []
-    for file in os.listdir(fileRoot + "test\\"):
-        img = cv2.imread(fileRoot + "test\\" + file)
+    for file in os.listdir(fileRoot + "test/"):
+        img = cv2.imread(fileRoot + "test/" + file)
         res = preprocess(img)
         test.append(res)
         name.append(file)
