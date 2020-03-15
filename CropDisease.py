@@ -118,7 +118,7 @@ def trainModel(X_train, X_test, y_train, y_test):
         return model
 print("model block declared\n")
 
-print ("Data loading")
+print("Data loading")
 data_img,data_lable = loadData()
 print("Data Loaded\n")
 
