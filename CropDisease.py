@@ -8,7 +8,7 @@ from tensorflow.python.client import device_lib
 fileRoot = "/home/zg2358/"
 zipsize =128
 
-print(tf.__version__)
+print("Tensorflow version: ", tf.__version__)
 
 path_healthy = "train/healthy_wheat/"
 path_leaf = "train/leaf_rust/"
