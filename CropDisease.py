@@ -9,6 +9,8 @@ fileRoot = "/home/zg2358/"
 zipsize =128
 
 print("Tensorflow version: ", tf.__version__, "\n")
+print("cv2 version: ", cv2.__version__, "\n")
+
 print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')), "\n")
 
 print ("path setting")
