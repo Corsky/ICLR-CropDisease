@@ -7,6 +7,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.python.client import device_lib
 import time
 
+start_time = time.time()
+
 fileRoot = "/home/zg2358/"
 zipsize =128
 
@@ -177,6 +179,9 @@ my_df.columns = ['ID', 'leaf_rust', 'stem_rust', 'healthy_wheat']
 my_df.to_csv('submission.csv', index=False)
 
 print("submission.csv modified\n")
+
+print("--- %s seconds running time---" % (time.time() - start_time))
+
 time.sleep(10)
 
 
