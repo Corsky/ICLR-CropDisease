@@ -93,13 +93,13 @@ time.sleep(1)
 print("model block declaring")
 def trainTestSplit(data_img,data_label):
 
-    X_train, X_test, y_train, y_test = train_test_split(data_img,data_label,test_size = 0)
+    X_train, X_test, y_train, y_test = train_test_split(data_img,data_label,test_size = 0.1)
     y_train =np.array(y_train)
     y_test =np.array(y_test)
     return X_train, X_test, y_train, y_test
 
 tf.config.set_soft_device_placement(True)
-tf.debugging.set_log_device_placement(True)
+#tf.debugging.set_log_device_placement(True)
 
 def trainModel(X_train, X_test, y_train, y_test):
    
