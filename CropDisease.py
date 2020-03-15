@@ -86,7 +86,7 @@ time.sleep(1)
 print("model block declaring")
 def trainTestSplit(data_img,data_label):
 
-    X_train, X_test, y_train, y_test = train_test_split(data_img,data_label,test_size = 0.3)
+    X_train, X_test, y_train, y_test = train_test_split(data_img,data_label,test_size = 0)
     y_train =np.array(y_train)
     y_test =np.array(y_test)
     return X_train, X_test, y_train, y_test
@@ -121,7 +121,7 @@ def trainModel(X_train, X_test, y_train, y_test):
                       metrics=['accuracy'])
 
         # Train
-        history = model.fit(X_train, y_train,batch_size = 16, epochs=100, use_multiprocessing = True)
+        history = model.fit(X_train, y_train,batch_size = 16, epochs=20, use_multiprocessing = True)
 
         # test
         #test_loss, test_acc = model.evaluate(X_test,y_test, batch_size = 16, verbose=2)
