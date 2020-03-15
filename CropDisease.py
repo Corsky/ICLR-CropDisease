@@ -83,6 +83,9 @@ def trainTestSplit(data_img,data_label):
     y_test =np.array(y_test)
     return X_train, X_test, y_train, y_test
 
+tf.config.set_soft_device_placement(True)
+tf.debugging.set_log_device_placement(True)
+
 def trainModel(X_train, X_test, y_train, y_test):
    
     with tf.device('/gpu:0'):
