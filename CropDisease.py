@@ -8,6 +8,8 @@ from tensorflow.python.client import device_lib
 fileRoot = "D:\\ICLR-CropDisease\\dataset\\"
 zipsize =128
 
+print(tf.__version__)
+
 path_healthy = "train\\healthy_wheat\\"
 path_leaf = "train\\leaf_rust\\"
 path_stem = "train\\stem_rust\\"
