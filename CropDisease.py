@@ -121,7 +121,7 @@ def trainModel(X_train, X_test, y_train, y_test):
                       metrics=['accuracy'])
 
         # Train
-        history = model.fit(X_train, y_train,batch_size = 16, epochs=20, use_multiprocessing = True)
+        history = model.fit(X_train, y_train,batch_size = 16, epochs=100, use_multiprocessing = True)
 
         # test
         #test_loss, test_acc = model.evaluate(X_test,y_test, batch_size = 16, verbose=2)
